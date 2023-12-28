@@ -1,3 +1,4 @@
 # White-Board-Sharing-App
 
-<img src="./Screenshots/Screenshot 1.png"/>
+![Screenshot 1](./Screenshot/Screenshot%201.png)
+
