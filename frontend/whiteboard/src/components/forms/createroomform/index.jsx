@@ -33,6 +33,12 @@ const navigate=useNavigate()
             <input type="text" value={roomId} className="form-control my-2" disabled placeholder="Generate room code"/>
             <div className="input-group-append m-2">
                 <button className="btn btn-primary btn-sm me-1" onClick={() => setRoomId(uuid())} type="button">generate</button>
+                <button
+                    className="btn btn-outline-dark border-0 btn-sm"
+                    type="button"
+                  >
+                    Copy
+                  </button>
             </div>
             </div>
             

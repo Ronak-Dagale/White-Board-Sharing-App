@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const httpServer = require("http").createServer(app); // Create an HTTP server using Express
 const { Server } = require("socket.io");
-const { addUser } = require('./utils/users'); // Import the addUser function from a module
+const { addUser, removeUser, getUser } = require('./utils/users'); // Import the addUser function from a module
 
 const io = new Server(httpServer); // Create a new instance of the Socket.IO server
 
@@ -23,8 +23,9 @@ io.on("connection", (socket) => {
         
         socket.join(roomId); // Join the socket to the specified room
 
-        const users = addUser(data); // Add the user to the users list
+        const users = addUser({ name, userId, roomId, host, presenter,socketId:socket.id }); // Add the user to the users list
         socket.emit("userIsJoined", { success: true, users }); // Emit an event to the connecting user
+        socket.broadcast.to(roomId).emit("userJoinedMessageBroadcast",name  )
         socket.broadcast.to(roomId).emit("allUsers", users); // Broadcast the updated users list to all users in the room
         socket.broadcast.to(roomId).emit("whiteBoardDataResponse", {
             imgURL: imgURLglobal, // Broadcast the current whiteboard image URL
@@ -37,6 +38,26 @@ io.on("connection", (socket) => {
             imgURL: data, // Broadcast the updated whiteboard image URL to all users in the room
         });
     });
+
+    socket.on("message", (data) => {
+        const { message } = data;
+        const user = getUser(socket.id);
+        if (user) {
+            socket.broadcast.to(roomIdglobal).emit("messageResponse", { message, name: user.name });
+            removeUser(socket.id); // Moved after emitting the message
+        }
+    });
+    socket.on("disconnect",()=>{
+        const user=getUser(socket.id)
+       
+        if(user)
+        {
+            removeUser(socket.id)
+            // console.log(user)
+            socket.broadcast.to(roomIdglobal).emit("userleftMessageBroadcast",user.name)
+        }
+       
+    })
 });
 
 const port = process.env.PORT || 5000;

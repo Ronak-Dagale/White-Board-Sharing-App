@@ -4,6 +4,8 @@ import { Routes, Route } from 'react-router-dom';
 import RoomaPage from './pages/roompage';
 import io from 'socket.io-client';
 import { useEffect, useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+
 
 // Socket.io server configuration
 const server = 'http://localhost:5000';
@@ -33,7 +35,7 @@ function App() {
     // Listen for "userIsJoined" event
     socket.on('userIsJoined', (data) => {
       if (data.success) {
-        console.log('userJoined123');
+        //console.log('userJoined123');
         setUsers(data.users);
       } else {
         console.log('problem');
@@ -44,10 +46,21 @@ function App() {
     socket.on('allUsers', (data) => {
       setUsers(data);
     });
+
+     socket.on("userJoinedMessageBroadcast",(data)=>{
+      console.log(data)
+      toast.info(`${data} Joined the Room`)
+     })
+
+      socket.on("userleftMessageBroadcast",(data)=>{
+        console.log(`${data} left the Room`)
+        toast.info(`${data} left the Room`)
+      })
   }, []);
 
   return (
     <div className="container">
+      <ToastContainer/>
       <Routes>
         <Route path="/" element={<Forms uuid={uuid} socket={socket} setUser={setUser} />} />
         <Route path="/:roomId" element={<RoomaPage user={user} socket={socket} users={users} />} />
