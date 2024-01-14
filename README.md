@@ -1,4 +1,4 @@
-# White-Board-Sharing-App
+# CoCreate CanvasChat
 
 ![ScreenShot1](Screenshots/Screenshot%201.png)
 
